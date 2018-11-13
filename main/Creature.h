@@ -39,6 +39,13 @@ class State;
 #define WAIT 0
 #define STARTLE 255
 
+#define AMBIENT1 1
+#define AMBIENT2 3
+#define AMBIENT3 5
+#define ACTIVE1 2
+#define ACTIVE2 4
+#define ACTIVE3 6
+
 struct Globals {
   uint16_t TX_POWER;
   uint8_t STARTLE_RAND_MIN;

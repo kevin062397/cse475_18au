@@ -61,6 +61,7 @@ void State::startled(uint8_t strength, uint8_t id) {
 		_creature.setStartleThreshold(_creature.getStartleThreshold() - _creature.getStartleThreshold() * (time - _creature.getLastStartle()) * _creature.GLOBALS.STARTLE_THRESHOLD_DECAY * this->getStartleFactor());
 		if (strength >= _creature.GLOBALS.STARTLE_THRESHOLD) {
 			dprintln("Will enter Startle state.");
+			// _creature.setNextState(new Startle(_creature));
 			this->txStartle(strength, id);
 			_creature.setLastStartleId(id);
 		}
@@ -70,8 +71,4 @@ void State::startled(uint8_t strength, uint8_t id) {
 
 int8_t* State::getGlobalWeights() {
 	return _globalWeights;
-}
-
-uint8_t random(uint8_t lower, uint8_t upper) {
-	return rand() % (upper - lower + 1) + lower;
 }

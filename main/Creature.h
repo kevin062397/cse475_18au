@@ -36,17 +36,19 @@ class State;
 #define PID_STARTLE 0x6
 #define PID_SEND_STATE 0x7
 
-#define WAIT 0
-#define STARTLE 255
+#define DISTANCE_ALPHA 0.65
+#define WAIT 0x00
+#define STARTLE 0xFF
 
-#define AMBIENT1 1
-#define AMBIENT2 3
-#define AMBIENT3 5
-#define ACTIVE1 2
-#define ACTIVE2 4
-#define ACTIVE3 6
+#define AMBIENT1 0x01
+#define AMBIENT2 0x03
+#define AMBIENT3 0x05
+#define ACTIVE1 0x02
+#define ACTIVE2 0x04
+#define ACTIVE3 0x06
 
-struct Globals {
+struct Globals
+{
 	uint16_t TX_POWER;
 	uint8_t STARTLE_RAND_MIN;
 	uint8_t STARTLE_RAND_MAX;
@@ -58,24 +60,25 @@ struct Globals {
 	uint16_t CYCLE_TIME;
 };
 
-class Creature {
- public:
+class Creature
+{
+  public:
 	Creature();
-	Creature(const Creature&) = delete;
-	Creature& operator=(Creature const&) = delete;
+	Creature(const Creature &) = delete;
+	Creature &operator=(Creature const &) = delete;
 	~Creature();
 
 	Adafruit_FeatherOLED oled = Adafruit_FeatherOLED();
 	struct Globals GLOBALS = {
-		/* TX_POWER */                  14,   // uint16_t
-		/* STARTLE_RAND_MIN */          100,  // uint8_t
-		/* STARTLE_RAND_MAX */          200,  // uint8_t
-		/* STARTLE_MAX */               255,  // uint8_t
-		/* STARTLE_THRESHOLD */         150,  // uint8_t
-		/* STARTLE_DECAY */             30,   // uint8_t
-		/* NUM_CREATURES */             30,   // uint8_t
-		/* STARTLE_THRESHOLD_DECAY */   0.9,  // float32
-		/* CYCLE_TIME in ms */          100,  // uint16_t
+		/* TX_POWER */ 14,					// uint16_t
+		/* STARTLE_RAND_MIN */ 100,			// uint8_t
+		/* STARTLE_RAND_MAX */ 200,			// uint8_t
+		/* STARTLE_MAX */ 255,				// uint8_t
+		/* STARTLE_THRESHOLD */ 150,		// uint8_t
+		/* STARTLE_DECAY */ 30,				// uint8_t
+		/* NUM_CREATURES */ 35,				// uint8_t
+		/* STARTLE_THRESHOLD_DECAY */ 0.01, // float32
+		/* CYCLE_TIME in ms */ 1000,		// uint16_t
 	};
 
 	/**
@@ -87,7 +90,7 @@ class Creature {
 	 * @param payload An array of bytes to use as the payload.
 	 * @returns true iff the packet was successfully sent, false otherwise.
 	 */
-	bool tx(const uint8_t pid, const uint8_t dstAddr, const uint8_t len, uint8_t* const payload);
+	bool tx(const uint8_t pid, const uint8_t dstAddr, const uint8_t len, uint8_t *const payload);
 
 	/**
 	 * Sets the next state to transition into. If this is set, the next loop will trigger
@@ -95,47 +98,58 @@ class Creature {
 	 *
 	 * @param next  State to transition into.
 	 */
-	void setNextState(State* const next) {
-		if (_next != nullptr && next != _next) {
+	void setNextState(State *const next)
+	{
+		if (_next != nullptr && next != _next)
+		{
 			delete _next;
 		}
 		_next = next;
 	}
 
 	// Getters and Setters
-	uint8_t getAddr() {
+	uint8_t getAddr()
+	{
 		return _addr;
 	}
 
-	uint8_t getLastStartleId() {
+	uint8_t getLastStartleId()
+	{
 		return _lastStartleId;
 	}
 
-	void setLastStartleId(uint8_t startleId) {
+	void setLastStartleId(uint8_t startleId)
+	{
 		_lastStartleId = startleId;
 	}
 
-	uint32_t getLastStartle() {
+	uint32_t getLastStartle()
+	{
 		return _lastStartle;
 	}
 
-	void setLastStartle(uint32_t lastStartle) {
+	void setLastStartle(uint32_t lastStartle)
+	{
 		_lastStartle = lastStartle;
 	}
 
-	uint8_t getStartleThreshold() {
+	uint8_t getStartleThreshold()
+	{
 		return _startleThreshold;
 	}
 
-	void setStartleThreshold(uint8_t thresh) {
+	void setStartleThreshold(uint8_t thresh)
+	{
 		_startleThreshold = thresh;
 	}
 
-	uint8_t* getCreatureStates() {
+	uint8_t *getCreatureStates()
+	{
 		return _creatureStates;
 	}
 
-	int8_t* getCreatureDistances() {
+	int8_t *getCreatureDistances()
+	{
 		return _creatureDistances;
 	}
 
@@ -146,7 +160,10 @@ class Creature {
 
 	// Called during main loop.
 	void loop();
- private:
+
+	State *getStateByID(int stateID);
+
+  private:
 	/**
 	 * Called during loop to poll radio for new received packets. Calls Creature::rx with any
 	 * received packets that were intended for this creature.
@@ -163,10 +180,10 @@ class Creature {
 	 * @param rssi  Signal strength of received packet, in db.
 	 * @returns true iff the packet was handled successfully, false otherwise.
 	 */
-	bool _rx(uint8_t pid, uint8_t srcAddr, uint8_t len, uint8_t* payload, int8_t rssi);
+	bool _rx(uint8_t pid, uint8_t srcAddr, uint8_t len, uint8_t *payload, int8_t rssi);
 
 	/** Handles updating GLOBALS */
-	bool _rxSetGlobals(uint8_t len, uint8_t* payload);
+	bool _rxSetGlobals(uint8_t len, uint8_t *payload);
 
 	/** Stops the creature by transitioning to WAIT */
 	void _rxStop();
@@ -176,7 +193,7 @@ class Creature {
 	 *
 	 *  @params payload  Should be start mode and state. Mode 0x01 for continue from _prev, 0x00 for starting at the given state ID.
 	 */
-	bool _rxStart(uint8_t len, uint8_t* payload);
+	bool _rxStart(uint8_t len, uint8_t *payload);
 
 	/**
 	 * Called when all states are broadcast by the controller. Should update this->_creatureStates.
@@ -184,7 +201,7 @@ class Creature {
 	 * @param payload  Should be an array of GLOBALS.NUM_CREATURES + 1 states for the states of creatures
 	 * 0 through NUM_CREATURES.
 	 */
-	bool _rxBroadcastStates(uint8_t len, uint8_t* payload);
+	bool _rxBroadcastStates(uint8_t len, uint8_t *payload);
 
 	/**
 	 * Transmits an SendState packet to notify the controller that this creature
@@ -202,7 +219,7 @@ class Creature {
 	 *
 	 * @param state New state to transition into.
 	 */
-	void _transition(State* const state);
+	void _transition(State *const state);
 
 	/**
 	 * Updates the running distance measure in _creatureDistances.
@@ -254,8 +271,6 @@ class Creature {
 
 	/** Last known state of the PIR sensor. Used for duplicate detection. */
 	bool _PIR;
-
-	State* getStateByID(int stateID);
 };
 
-#endif  // _CREATURE_H_
+#endif // _CREATURE_H_

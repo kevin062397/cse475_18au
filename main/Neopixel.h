@@ -6,39 +6,48 @@
 #define NEOPIXEL_PIN 19
 #define NEOPIXEL_COUNT 16
 
-class Neopixel {
- public:
-  /** List of all neopixel functions in this class. Each takes dt, the difference in time since the last call. */
-  static void rainbow(uint32_t dt);
+class Neopixel
+{
+  public:
+	/** List of all neopixel functions in this class. Each takes dt, the difference in time since the last call. */
+	static void rainbow(uint32_t dt);
+	static void startle(uint32_t dt);
+	static void ambient1(uint32_t dt);
+	static void ambient2(uint32_t dt);
+	static void ambient3(uint32_t dt);
+	static void active1(uint32_t dt);
+	static void active2(uint32_t dt);
+	static void active3(uint32_t dt);
 
-  /** Array of all light effects, in a fixed order, used to assign an index to each. Add your effects to this! */
-  static constexpr void (*LIGHTS[2])(uint32_t) = {nullptr, &rainbow};
+	/** Array of all light effects, in a fixed order, used to assign an index to each. Add your effects to this! */
+	static constexpr void (*LIGHTS[9])(uint32_t) = {nullptr, &rainbow, &startle, &ambient1, &ambient2, &ambient3, &active1, &active2, &active3};
 
-  /**
-   * Use this to set the current light gesture.
-   *
-   * @param lightIdx Index of new light effect to play in Neopixel::LIGHTS.
-   */
-  static void setLight(uint8_t lightIdx);
+	/**
+	 * Use this to set the current light gesture.
+	 *
+	 * @param lightIdx Index of new light effect to play in Neopixel::LIGHTS.
+	 */
+	static void setLight(uint8_t lightIdx);
 
-  /**
-   * @returns the index of the current light gesture.
-   */
-  static uint8_t getLight();
+	/**
+	 * @returns the index of the current light gesture.
+	 */
+	static uint8_t getLight();
 
-  /** Called to loop whatever the currently selected lighting effect is. */
-  static void loop();
+	/** Called to loop whatever the currently selected lighting effect is. */
+	static void loop();
 
-  /** Initialize Neopixel. */
-  static void setup();
- private:
-  /** Current light effect being played. Please do not change this value directly. Use Neopixel::setLight(uint8_t) */
-  static uint8_t _currentIdx;
+	/** Initialize Neopixel. */
+	static void setup();
 
-  /** Time since loop was last called. */
-  static uint32_t _lastLoop;
+  private:
+	/** Current light effect being played. Please do not change this value directly. Use Neopixel::setLight(uint8_t) */
+	static uint8_t _currentIdx;
 
-  static Adafruit_NeoPixel_ZeroDMA _strip;
+	/** Time since loop was last called. */
+	static uint32_t _lastLoop;
+
+	static Adafruit_NeoPixel_ZeroDMA _strip;
 };
 
-#endif  // _NEOPIXEL_H_
+#endif // _NEOPIXEL_H_

@@ -1,28 +1,25 @@
 #include "Ambient3.h"
-#include "Debug.h"
+#include "Midi.h"
 
 constexpr uint8_t Ambient3::_localWeights[];
 
-uint8_t Ambient3::getNumRepeats() {
-	return 32;
+uint8_t Ambient3::getNumRepeats()
+{
+	return random(8, 17); // 8 - 16
 }
 
-void Ambient3::loop(uint32_t dt) {
-	dprintln(F("Ambient3ing..."));
+void Ambient3::loop(uint32_t dt)
+{
+	playSound(getId());
+	playEffect(getId());
 }
 
-const uint8_t* Ambient3::getLocalWeights() {
+const uint8_t *Ambient3::getLocalWeights()
+{
 	return this->_localWeights;
 }
 
-float Ambient3::getStartleFactor() {
-	return 9999999999;
+float Ambient3::getStartleFactor()
+{
+	return 0.0005f;
 }
-
-bool Ambient3::rxStartle(int8_t rssi, uint8_t len, uint8_t* payload) {}
-
-void Ambient3::PIR() {
-	dprintln("PIR triggered!");
-}
-
-void Ambient3::startled(uint8_t strength, uint8_t id) {}

@@ -1,28 +1,25 @@
 #include "Active2.h"
-#include "Debug.h"
+#include "Midi.h"
 
 constexpr uint8_t Active2::_localWeights[];
 
-uint8_t Active2::getNumRepeats() {
-	return 32;
+uint8_t Active2::getNumRepeats()
+{
+	return random(4, 9); // 4 - 8
 }
 
-void Active2::loop(uint32_t dt) {
-	dprintln(F("Active2ing..."));
+void Active2::loop(uint32_t dt)
+{
+	playSound(getId());
+	playEffect(getId());
 }
 
-const uint8_t* Active2::getLocalWeights() {
+const uint8_t *Active2::getLocalWeights()
+{
 	return this->_localWeights;
 }
 
-float Active2::getStartleFactor() {
-	return 9999999999;
+float Active2::getStartleFactor()
+{
+	return 0.0015f;
 }
-
-bool Active2::rxStartle(int8_t rssi, uint8_t len, uint8_t* payload) {}
-
-void Active2::PIR() {
-	dprintln("PIR triggered!");
-}
-
-void Active2::startled(uint8_t strength, uint8_t id) {}

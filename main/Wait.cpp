@@ -4,31 +4,37 @@
 
 constexpr uint8_t Wait::_localWeights[];
 
-uint8_t Wait::getNumRepeats() {
+uint8_t Wait::getNumRepeats()
+{
 	return 32;
 }
 
-State* Wait::transition() {
+State *Wait::transition()
+{
 	Midi::setSound(Midi::getSound() ? 0 : 1);
 	Neopixel::setLight(Neopixel::getLight() ? 0 : 1);
 	return this;
 }
 
-void Wait::loop(uint32_t dt) {
+void Wait::loop(uint32_t dt)
+{
 	dprintln(F("Waiting..."));
 }
 
-const uint8_t* Wait::getLocalWeights() {
+const uint8_t *Wait::getLocalWeights()
+{
 	return this->_localWeights;
 }
 
-float Wait::getStartleFactor() {
+float Wait::getStartleFactor()
+{
 	return 9999999999;
 }
 
-bool Wait::rxStartle(int8_t rssi, uint8_t len, uint8_t* payload) {}
+bool Wait::rxStartle(int8_t rssi, uint8_t len, uint8_t *payload) {}
 
-void Wait::PIR() {
+void Wait::PIR()
+{
 	dprintln("PIR triggered!");
 }
 

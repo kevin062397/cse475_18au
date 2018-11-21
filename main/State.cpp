@@ -21,101 +21,13 @@ char *State::getName()
 	return _name;
 }
 
-void State::playSound(uint8_t sound_idx)
-{
-	bool soundExists = true;
-	switch (sound_idx)
-	{
-	case STARTLE:
-		Midi::setSound(18);
-		break;
-	case AMBIENT1:
-		Midi::setSound(19);
-		break;
-	case AMBIENT2:
-		Midi::setSound(20);
-		break;
-	case AMBIENT3:
-		Midi::setSound(21);
-		break;
-	case ACTIVE1:
-		Midi::setSound(22);
-		break;
-	case ACTIVE2:
-		Midi::setSound(23);
-		break;
-	case ACTIVE3:
-		Midi::setSound(24);
-		break;
-	default:
-		soundExists = false;
-		break;
-	}
-
-	if (soundExists)
-	{
-		Serial.print("Playing sound ");
-		Serial.print(sound_idx);
-		Serial.println("...");
-	}
-	else
-	{
-		Serial.print("No sound of ID ");
-		Serial.println(sound_idx);
-	}
-}
-
-void State::playEffect(uint8_t effect_idx)
-{
-	bool effectExists = true;
-	switch (effect_idx)
-	{
-	case STARTLE:
-		Neopixel::setLight(2);
-		break;
-	case AMBIENT1:
-		Neopixel::setLight(3);
-		break;
-	case AMBIENT2:
-		Neopixel::setLight(4);
-		break;
-	case AMBIENT3:
-		Neopixel::setLight(5);
-		break;
-	case ACTIVE1:
-		Neopixel::setLight(6);
-		break;
-	case ACTIVE2:
-		Neopixel::setLight(7);
-		break;
-	case ACTIVE3:
-		Neopixel::setLight(8);
-		break;
-	default:
-		effectExists = false;
-		break;
-	}
-
-	if (effectExists)
-	{
-		Serial.print("Playing effect ");
-		Serial.print(effect_idx);
-		Serial.println("...");
-	}
-	else
-	{
-		Serial.print("No effect of ID ");
-		Serial.println(effect_idx);
-	}
-}
-
 bool State::rxPlaySound(uint8_t len, uint8_t *payload)
 {
 	if (len < 1)
 	{
 		return false;
 	}
-	playSound(payload[0]);
+	Midi::setSound(payload[0]);
 	return true;
 }
 
@@ -125,7 +37,7 @@ bool State::rxPlayEffect(uint8_t len, uint8_t *payload)
 	{
 		return false;
 	}
-	playEffect(payload[0]);
+	Neopixel::setLight(payload[0]);
 	return true;
 }
 

@@ -75,160 +75,175 @@ void Neopixel::rainbow(uint32_t dt)
 }
 
 // Custom Startle
-void Neopixel::startle(uint32_t dt) {
-	int numPixels = _strip.numPixels();
-	for (int j = 0; j < 256; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			int r = 255 / numPixels * (i + numPixels / 3 * 0) % 255;
-			int g = 255 / numPixels * (i + numPixels / 3 * 1) % 255;
-			int b = 255 / numPixels * (i + numPixels / 3 * 2) % 255;
-			_strip.setPixelColor(i, r * j / 255, g * j / 255, b * j / 255, j / 2);
+void Neopixel::startle(uint32_t dt)
+{
+	static uint8_t loopCounter = 0;
+	if (dt > 10)
+	{
+		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
+		{
+			uint8_t r = 255 / NEOPIXEL_COUNT * (i + NEOPIXEL_COUNT / 3 * 0) % 255;
+			uint8_t g = 255 / NEOPIXEL_COUNT * (i + NEOPIXEL_COUNT / 3 * 1) % 255;
+			uint8_t b = 255 / NEOPIXEL_COUNT * (i + NEOPIXEL_COUNT / 3 * 2) % 255;
+			_strip.setPixelColor(i, r * loopCounter / 255, g * loopCounter / 255, b * loopCounter / 255, loopCounter / 2);
 		}
 		_strip.show();
-		delay(10);
+		loopCounter++;
 	}
 }
 
 // Custom Ambient 1
-void Neopixel::ambient1(uint32_t dt) {
-	int wait = 10;
-	int numPixels = _strip.numPixels();
-	for (int j = 64; j < 256; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			_strip.setPixelColor(i, j, j, j, j);
+void Neopixel::ambient1(uint32_t dt)
+{
+	static uint8_t loopCounter = 64;
+	static bool incr = true;
+	if (dt > 10)
+	{
+		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
+		{
+			_strip.setPixelColor(i, loopCounter, loopCounter, loopCounter, loopCounter);
 		}
 		_strip.show();
-		delay(wait);
-	}
-	for (int j = 255; j >= 64; j--) {
-		for (int i = 0; i < numPixels; i++) {
-			_strip.setPixelColor(i, j, j, j, j);
+
+		loopCounter += incr ? 1 : -1;
+		if (loopCounter == 64 || loopCounter == 255)
+		{
+			incr = !incr;
 		}
-		_strip.show();
-		delay(wait);
 	}
 }
 
 // Custom Ambient 2
-void Neopixel::ambient2(uint32_t dt) {
-	int numPixels = _strip.numPixels();
-	for (int j = 0; j < numPixels; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			int light1 = j;
-			int light2 = (j - 1) % numPixels;
-			int light3 = (j + 1) % numPixels;
-			int brightness = 0;
-			if (i == light1 || i == light2 || i == light3) {
+void Neopixel::ambient2(uint32_t dt)
+{
+	static uint8_t loopCounter = 0;
+	uint16_t delayFactor = abs(loopCounter - NEOPIXEL_COUNT / 2) * 20;
+	if (dt > delayFactor)
+	{
+		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
+		{
+			uint8_t light1 = loopCounter;
+			uint8_t light2 = (loopCounter - 1) % NEOPIXEL_COUNT;
+			uint8_t light3 = (loopCounter + 1) % NEOPIXEL_COUNT;
+			uint8_t brightness = 0;
+			if (i == light1 || i == light2 || i == light3)
+			{
 				brightness = 255;
 			}
 			_strip.setPixelColor(i, brightness, brightness, brightness, brightness);
 		}
 		_strip.show();
 
-		int delayFactor = abs(j - numPixels / 2);
-		delay(delayFactor * 20);
+		loopCounter++;
+		if (loopCounter == NEOPIXEL_COUNT)
+		{
+			loopCounter = 0;
+		}
 	}
 }
 
 // Custom Ambient 3
-void Neopixel::ambient3(uint32_t dt) {
-	int numPixels = _strip.numPixels();
-	for (int j = 0; j < numPixels; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			int brightness = 0;
-			if ((i + j) % 4 == 0) {
+void Neopixel::ambient3(uint32_t dt)
+{
+	static uint8_t loopCounter = 0;
+	if (dt > 200)
+	{
+		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
+		{
+			uint8_t brightness = 0;
+			if ((i + loopCounter) % 4 == 0)
+			{
 				brightness = 255;
 			}
 			_strip.setPixelColor(i, brightness, brightness, brightness, brightness);
 		}
 		_strip.show();
-		delay(200);
+
+		loopCounter++;
+		if (loopCounter == NEOPIXEL_COUNT)
+		{
+			loopCounter = 0;
+		}
 	}
 }
 
 // Custom Active 1
-void Neopixel::active1(uint32_t dt) {
-	int numPixels = _strip.numPixels();
-	int brightness = 255;
-	for (int i = 0; i < numPixels; i++) {
-		_strip.setPixelColor(i, brightness, brightness, brightness, brightness);
+void Neopixel::active1(uint32_t dt)
+{
+	if (dt > 500)
+	{
+		uint8_t brightness = 255;
+		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
+		{
+			_strip.setPixelColor(i, brightness, brightness, brightness, brightness);
+		}
+		_strip.show();
+		delay(50);
+		brightness = 0;
+		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
+		{
+			_strip.setPixelColor(i, brightness, brightness, brightness, brightness);
+		}
+		_strip.show();
 	}
-	_strip.show();
-	delay(50);
-	brightness = 0;
-	for (int i = 0; i < numPixels; i++) {
-		_strip.setPixelColor(i, brightness, brightness, brightness, brightness);
-	}
-	_strip.show();
-	delay(500);
 }
 
 // Custom Active 2
-void Neopixel::active2(uint32_t dt) {
-	int numPixels = _strip.numPixels();
-	for (int i = 0; i < numPixels; i++) {
-		int r = random(256);
-		int g = random(256);
-		int b = random(256);
-		_strip.setPixelColor(i, r, g, b);
+void Neopixel::active2(uint32_t dt)
+{
+	if (dt > 200)
+	{
+		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
+		{
+			uint8_t r = random(256);
+			uint8_t g = random(256);
+			uint8_t b = random(256);
+			_strip.setPixelColor(i, r, g, b);
+		}
+		_strip.show();
 	}
-	_strip.show();
-	delay(200);
 }
 
 // Custom Active 3
-void Neopixel::active3(uint32_t dt) {
-	int wait = 2;
-	int numPixels = _strip.numPixels();
-	int r = 255;
-	int g = 0;
-	int b = 0;
-	for (int j = 0; j < 255; j++) {
-		for (int i = 0; i < numPixels; i++) {
+void Neopixel::active3(uint32_t dt)
+{
+	static uint16_t loopCounter = 0;
+	static uint16_t r = 255;
+	static uint16_t g = 0;
+	static uint16_t b = 0;
+
+	if (dt > 2)
+	{
+		for (int i = 0; i < NEOPIXEL_COUNT; i++)
+		{
 			_strip.setPixelColor(i, r, g, b);
 		}
-		g++;
 		_strip.show();
-		delay(wait);
-	}
-	for (int j = 0; j < 255; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			_strip.setPixelColor(i, r, g, b);
+
+		switch (++loopCounter % 256)
+		{
+		case 0:
+			g++;
+			break;
+		case 1:
+			r--;
+			break;
+		case 2:
+			b++;
+			break;
+		case 3:
+			g--;
+			break;
+		case 4:
+			r++;
+			break;
+		case 5:
+			b--;
+			break;
+		default:
+			loopCounter = 1;
+			g++;
+			break;
 		}
-		r--;
-		_strip.show();
-		delay(wait);
-	}
-	for (int j = 0; j < 255; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			_strip.setPixelColor(i, r, g, b);
-		}
-		b++;
-		_strip.show();
-		delay(wait);
-	}
-	for (int j = 0; j < 255; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			_strip.setPixelColor(i, r, g, b);
-		}
-		g--;
-		_strip.show();
-		delay(wait);
-	}
-	for (int j = 0; j < 255; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			_strip.setPixelColor(i, r, g, b);
-		}
-		r++;
-		_strip.show();
-		delay(wait);
-	}
-	for (int j = 0; j < 255; j++) {
-		for (int i = 0; i < numPixels; i++) {
-			_strip.setPixelColor(i, r, g, b);
-		}
-		b--;
-		_strip.show();
-		delay(wait);
 	}
 }

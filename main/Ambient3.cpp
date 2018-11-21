@@ -1,5 +1,6 @@
 #include "Ambient3.h"
 #include "Midi.h"
+#include "Neopixel.h"
 
 constexpr uint8_t Ambient3::_localWeights[];
 
@@ -10,8 +11,8 @@ uint8_t Ambient3::getNumRepeats()
 
 void Ambient3::loop(uint32_t dt)
 {
-	playSound(getId());
-	playEffect(getId());
+	Midi::setSound(5);
+	Neopixel::setLight(21);
 }
 
 const uint8_t *Ambient3::getLocalWeights()

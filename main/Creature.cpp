@@ -16,7 +16,7 @@
 
 #define KIT_NUM 9
 
-#define VERSION "2.0"
+#define VERSION "2.1"
 
 // Returns current battery voltage
 inline float getBatteryVoltage()

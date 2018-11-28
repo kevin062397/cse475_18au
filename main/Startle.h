@@ -14,9 +14,9 @@ class Startle : public State
 	float getStartleFactor();
 
   protected:
-	bool rxStartle(int8_t rssi, uint8_t len, uint8_t *payload);
+	bool rxStartle(uint8_t len, uint8_t *payload);
 	void PIR();
-	void startled(uint8_t strength, uint8_t id);
+	void startled();
 
   private:
 	static constexpr uint8_t _localWeights[ACTIVE_STATES + AMBIENT_STATES] = {1, 1, 1, 1, 1, 1};

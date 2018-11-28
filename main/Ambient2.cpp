@@ -11,8 +11,8 @@ uint8_t Ambient2::getNumRepeats()
 
 void Ambient2::loop(uint32_t dt)
 {
-	Midi::setSound(4);
-	Neopixel::setLight(20);
+	Midi::setSound(20);
+	Neopixel::setLight(4);
 }
 
 const uint8_t *Ambient2::getLocalWeights()

@@ -153,7 +153,7 @@ class Creature
 		return _creatureDistances;
 	}
 
-	uint8_t updatedThreshold();
+	uint8_t updateThreshold();
 
 	// Run after construction but before loop.
 	void setup();
@@ -161,7 +161,7 @@ class Creature
 	// Called during main loop.
 	void loop();
 
-	State *getStateByID(int stateID);
+	State *getState(int id);
 
   private:
 	/**

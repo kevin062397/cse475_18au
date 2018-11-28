@@ -1,9 +1,9 @@
-#include <math.h>
 #include "Creature.h"
+#include "State.h"
+#include "Startle.h"
 #include "Midi.h"
 #include "Neopixel.h"
-#include "Startle.h"
-#include "State.h"
+#include "Debug.h"
 
 State::State(Creature &creature, char *const name, const uint8_t id) : _creature(creature), _id(id)
 {
@@ -92,15 +92,16 @@ State *State::transition()
 		stateLikelihoods[i] = getLocalWeights()[i] + stateGlobalScalars[i] * distanceStateSums[i];
 	}
 
-	Serial.print(stateLikelihoods[0]);
-	Serial.print("\t");
+	dprintln(F("State transition weights:"));
+	dprint(stateLikelihoods[0]);
+	dprint(F("\t"));
 	for (uint8_t i = 1; i < ACTIVE_STATES + AMBIENT_STATES; i++)
 	{
 		stateLikelihoods[i] += stateLikelihoods[i - 1];
-		Serial.print(stateLikelihoods[i]);
-		Serial.print("\t");
+		dprint(stateLikelihoods[i]);
+		dprint(F("\t"));
 	}
-	Serial.println();
+	dprintln();
 
 	float randomVal = static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (stateLikelihoods[ACTIVE_STATES + AMBIENT_STATES - 1])));
 
@@ -114,11 +115,12 @@ State *State::transition()
 		}
 	}
 
-	Serial.print(randomVal);
-	Serial.print(" --> ");
-	Serial.println(stateID);
+	dprint(F("Generated "));
+	dprint(randomVal);
+	dprint(F(" -->  "));
+	dprintln(stateID);
 
-	return _creature.getStateByID(stateID);
+	return _creature.getState(stateID);
 }
 
 void State::PIR()
@@ -130,9 +132,10 @@ void State::PIR()
 
 void State::startled(uint8_t strength, uint8_t id)
 {
-	if (id != _creature.getLastStartleId())
+	uint8_t last = _creature.getLastStartleId();
+	if (id != last)
 	{
-		_creature.updatedThreshold();
+		_creature.updateThreshold();
 		if (strength >= _creature.getStartleThreshold())
 		{
 			_creature.setNextState(new Startle(_creature));

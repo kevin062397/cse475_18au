@@ -118,7 +118,8 @@ void Neopixel::ambient2(uint32_t dt)
 {
 	static uint8_t loopCounter = 0;
 	uint16_t delayFactor = abs(loopCounter - NEOPIXEL_COUNT / 2) * 20;
-	if (dt > delayFactor)
+	// if (dt > delayFactor)
+	if (dt > 50)
 	{
 		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
 		{
@@ -146,7 +147,7 @@ void Neopixel::ambient2(uint32_t dt)
 void Neopixel::ambient3(uint32_t dt)
 {
 	static uint8_t loopCounter = 0;
-	if (dt > 200)
+	if (dt > 50) // Original Delay 200
 	{
 		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
 		{
@@ -170,7 +171,7 @@ void Neopixel::ambient3(uint32_t dt)
 // Custom Active 1
 void Neopixel::active1(uint32_t dt)
 {
-	if (dt > 500)
+	if (dt > 50) // Original Delay 500
 	{
 		uint8_t brightness = 255;
 		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
@@ -191,7 +192,7 @@ void Neopixel::active1(uint32_t dt)
 // Custom Active 2
 void Neopixel::active2(uint32_t dt)
 {
-	if (dt > 200)
+	if (dt > 50) // Original Delay 200
 	{
 		for (uint8_t i = 0; i < NEOPIXEL_COUNT; i++)
 		{
@@ -212,7 +213,7 @@ void Neopixel::active3(uint32_t dt)
 	static uint16_t g = 0;
 	static uint16_t b = 0;
 
-	if (dt > 2)
+	if (dt > 50) // Original Delay 2
 	{
 		for (int i = 0; i < NEOPIXEL_COUNT; i++)
 		{

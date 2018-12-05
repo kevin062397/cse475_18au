@@ -14,9 +14,10 @@
 
 #include <cmath>
 
+// TODO: put your kit number here
 #define KIT_NUM 9
 
-#define VERSION "2.2"
+#define VERSION "2.3"
 
 // Returns current battery voltage
 inline float getBatteryVoltage()
@@ -28,20 +29,16 @@ inline float getBatteryVoltage()
 Creature::Creature()
 {
 	// Initialize _next to be the Wait state, so we will immediately transition into it on the first loop.
-	_next = getState(1);
+	_next = getState(0);
 	_prev = _state = nullptr;
-
-	if (KIT_NUM < 0)
-	{
-		Serial.print(F("Invalid kit number: "));
-		Serial.println();
-		while (1)
-			;
-	}
 
 	pinMode(ID_PIN, INPUT_PULLUP);
 	_kitNum = KIT_NUM;
 	_addr = 2 * KIT_NUM - digitalRead(ID_PIN);
+	if (_kitNum <= 0)
+	{
+		_addr = BROADCAST_ADDR;
+	}
 
 	// Parens zero initialize
 	_creatureDistances = new int8_t[GLOBALS.NUM_CREATURES + 1]();
@@ -67,24 +64,22 @@ void Creature::loop()
 		_updateDisplay();
 
 		// Some helpful printlns
-		/*for (int i = 0; i < GLOBALS.NUM_CREATURES + 1; i++)
-		{
-			dprint(_creatureStates[i]);
-			dprint("\t");
-		}
-		dprintln();
+		/*for (int i = 0; i < GLOBALS.NUM_CREATURES + 1; i++) {
+      dprint(_creatureStates[i]);
+      dprint("\t");
+    }
+    dprintln();
 
-		for (int i = 0; i < GLOBALS.NUM_CREATURES + 1; i++)
-		{
-			dprint(_creatureDistances[i]);
-			dprint("\t");
-		}
-		dprintln();
+    for (int i = 0; i < GLOBALS.NUM_CREATURES + 1; i++) {
+      dprint(_creatureDistances[i]);
+      dprint("\t");
+    }
+    dprintln();
 
-		dprint("Threshold: ");
-		dprint(_startleThreshold);
-		dprint("/");
-		dprintln("255");*/
+    dprint("Threshold: ");
+    dprint(_startleThreshold);
+    dprint("/");
+    dprintln("255");*/
 
 		if (_next != NULL)
 		{
@@ -274,7 +269,7 @@ bool Creature::_rxSetGlobals(uint8_t len, uint8_t *payload)
 
 void Creature::_rxStop()
 {
-	setNextState(new Wait(*this));
+	setNextState(getState(0));
 }
 
 bool Creature::_rxStart(uint8_t len, uint8_t *payload)
@@ -511,35 +506,35 @@ void Creature::_updateDisplay()
 {
 	_battery = 0.95 * _battery + 0.05 * getBatteryVoltage();
 
-	oled.clearDisplay();
-	oled.setBattery(_battery);
-	oled.renderBattery();
+	_oled.clearDisplay();
+	_oled.setBattery(_battery);
+	_oled.renderBattery();
 
-	oled.setCursor(0, 0);
-	oled.print(_state ? _state->getName() : "None");
+	_oled.setCursor(0, 0);
+	_oled.print(_state ? _state->getName() : "None");
 
-	oled.setCursor(0, 11);
-	oled.print(F("TXRX:"));
-	oled.print(_txCount);
-	oled.print(F("/"));
-	oled.println(_rxCount);
+	_oled.setCursor(0, 11);
+	_oled.print(F("TXRX:"));
+	_oled.print(_txCount);
+	_oled.print(F("/"));
+	_oled.println(_rxCount);
 
-	oled.setCursor((OLED_WIDTH - 2 - (_addr > 9) - (_addr > 99) - sizeof(VERSION)) * 6, 11);
-	oled.print("#");
-	oled.print(_addr);
-	oled.print("v");
-	oled.print(VERSION);
+	_oled.setCursor((OLED_WIDTH - 2 - (_addr > 9) - (_addr > 99) - sizeof(VERSION)) * 6, 11);
+	_oled.print("#");
+	_oled.print(_addr);
+	_oled.print("v");
+	_oled.print(VERSION);
 
-	oled.setCursor(0, 22);
-	oled.print(F("Sound: "));
-	oled.print(Midi::getSoundIdx());
+	_oled.setCursor(0, 22);
+	_oled.print(F("Sound: "));
+	_oled.print(Midi::getSoundIdx());
 
 	uint8_t lightIdx = Neopixel::getLight();
-	oled.setCursor((OLED_WIDTH - 8 - (lightIdx > 9) - (lightIdx > 99)) * 6, 22);
-	oled.print(F("Light: "));
-	oled.print(lightIdx);
+	_oled.setCursor((OLED_WIDTH - 8 - (lightIdx > 9) - (lightIdx > 99)) * 6, 22);
+	_oled.print(F("Light: "));
+	_oled.print(lightIdx);
 
-	oled.display();
+	_oled.display();
 }
 
 void Creature::setup()
@@ -552,11 +547,11 @@ void Creature::setup()
 	delay(100);
 	pinMode(LED_PIN, OUTPUT);
 
-	oled.begin(SSD1306_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3C (for the 128x32)
-	oled.display();
-	oled.clearDisplay();
-	oled.init();
-	oled.setBatteryVisible(true);
+	_oled.begin(SSD1306_SWITCHCAPVCC, 0x3C); // initialize with the I2C addr 0x3C (for the 128x32)
+	_oled.display();
+	_oled.clearDisplay();
+	_oled.init();
+	_oled.setBatteryVisible(true);
 	_updateDisplay();
 
 	Neopixel::setup();

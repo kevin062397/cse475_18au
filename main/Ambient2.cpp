@@ -11,7 +11,7 @@ uint8_t Ambient2::getNumRepeats()
 
 void Ambient2::loop(uint32_t dt)
 {
-	Midi::setSound(20);
+	Midi::setSound(random(0x29, 0x2B));
 	Neopixel::setLight(4);
 }
 

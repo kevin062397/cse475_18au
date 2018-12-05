@@ -11,7 +11,7 @@ uint8_t Active2::getNumRepeats()
 
 void Active2::loop(uint32_t dt)
 {
-	Midi::setSound(23);
+	Midi::setSound(random(0x20, 0x25));
 	Neopixel::setLight(7);
 }
 

@@ -11,7 +11,7 @@ uint8_t Startle::getNumRepeats()
 
 void Startle::loop(uint32_t dt)
 {
-	Midi::setSound(18);
+	Midi::setSound(random(0, 2) ? 0x25 : 0x27);
 	Neopixel::setLight(2);
 }
 

@@ -19,7 +19,7 @@ class Startle : public State
 	void startled();
 
   private:
-	static constexpr uint8_t _localWeights[ACTIVE_STATES + AMBIENT_STATES] = {1, 1, 1, 1, 1, 1};
+	static constexpr uint8_t _localWeights[ACTIVE_STATES + AMBIENT_STATES] = {1, 2, 1, 2, 1, 2};
 };
 
 #endif // _STARTLE_H_

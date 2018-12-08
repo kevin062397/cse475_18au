@@ -122,7 +122,7 @@ class State
 	/** Reference to the creature this is a state in */
 	Creature &_creature;
 
-	int8_t _globalWeights[ACTIVE_STATES + AMBIENT_STATES] = {1, 1, 1, 1, 1, 1};
+	int8_t _globalWeights[ACTIVE_STATES + AMBIENT_STATES] = {4, -2, 4, -2, 4, -2};
 
   private:
 	char _name[MAX_NAME_LEN + 1];
